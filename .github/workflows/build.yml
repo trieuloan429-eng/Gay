@@ -1,0 +1,30 @@
+name: Build Tweak
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract ZIP
+        run: |
+          if [ -f "Archive.zip" ]; then
+            unzip -q Archive.zip -d .
+          fi
+
+      - name: Setup Theos
+        uses: Randomblock1/theos-action@v1
+
+      - name: Build Package
+        run: |
+          make clean
+          make package FINALPACKAGE=1
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mod-FF-Deb
+          path: packages/*.deb
